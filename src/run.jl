@@ -7,9 +7,10 @@ function run()
   # main loop
     while t < t_end
         dt = timestep()
-        @show t, dt
 
         diagnose()
+
+        Printf.@printf("t = %5f, dt = %.5f, p_err = %.5e, U_err = %.5e\n", t, dt, p_error, U_error)
 
         kick_drift(dt)
     
@@ -28,55 +29,56 @@ function evaluate()
         kernel_summation(i)
     end
 
-    for i in active_particle
+    Threads.@threads for i in 1:Npart
     # neighbour loop
         for j in 1:Npart
             sph[i].F1 += force(i, j)
-            sph[j].dU += dU(i, j)
+            sph[i].dU += dU(i, j)
+
+            if force(i, j) + force(j,i) > 1e-6
+                @show i, j, force(i, j)/force(j,i)
+            end
         end
     end
 end
 
 function kick_drift(dt)
-    for i in active_particle
+    for i in 1:Npart
 
     # v(t + 0.5dt) = v(t) + a(t)*dt/2
         sph[i].p1 = sph[i].p1 + sph[i].F1 * 0.5 * dt
         sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
 
-    # r(t + dt) = r(t) + v(t + 0.5dt)*dt
-        sph[i].x1 = sph[i].x1 + sph[i].p1 / sph[i].m * dt
-
-    # periodic_boundary(i)
-
     # refresh
         sph[i].F1 = 0
         sph[i].dU = 0
     end
+
+    for i in active_particle
+        # r(t + dt) = r(t) + v(t + 0.5dt)*dt
+        sph[i].x1 = sph[i].x1 + sph[i].p1 / sph[i].m * dt
+    end
 end
 
 function kick(dt)
-    for i in active_particle
+    for i in 1:Npart
     # v(t + dt) = v(t + 0.5dt) + a(t + 1)*dt/2
         sph[i].p1 = sph[i].p1 + sph[i].F1 * 0.5 * dt
         sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
     end
 end
 
-function periodic_boundary(i)
-    if sph[i].x1 < x1_min
-        sph[i].x1 += lbox
-    elseif sph[i].x1 > x1_max
-    sph[i].x1 -= lbox
-    end
-end
-
 function diagnose()
   p_sum = 0
+  p_sum_abs = 0
   U_sum = 0
+  U_sum_abs = 0
   for i in 1:length(sph)
     p_sum += sph[i].p1
+    p_sum_abs += abs(sph[i].p1)
     U_sum += sph[i].U
+    U_sum_abs += abs(sph[i].U)
   end
-  @show p_sum, U_sum
+  global p_error = (p_sum - p_initial)/p_sum_abs
+  global U_error = (U_sum - U_initial)/U_sum_abs
 end

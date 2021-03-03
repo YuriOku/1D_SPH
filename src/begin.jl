@@ -4,35 +4,44 @@ function initialize()
   global t_output = output_interval
   global output_count = 0
 
-  linecount = 0
-  open(initcond, "r") do io
-    for line in eachline(io)
-      linecount += 1
-    end
-  end
-
-  global Npart = linecount
   global lbox = x1_max - x1_min
   global sph = Array{Ptype, 1}(undef, Npart)
 
-  linecount = 0
-  x1_array = []
-  open(initcond, "r") do io
-    for line in eachline(io)
-      linecount += 1
-      words = split(line)
-      x1 = parse(Float64, words[1])
-      v1 = parse(Float64, words[2])
-      m = parse(Float64, words[3])
-      rho = parse(Float64, words[4])
-      P = parse(Float64, words[5])
-      sph[linecount] = Ptype(x1, v1, m, rho, P)
-      push!(x1_array, x1)
+  global p_initial = 0
+  global U_initial = P_left/(gamma - 1)*(center - x1_min) + P_right/(gamma - 1)*(x1_max - center)
+
+  make_shock_tube()
+
+  Nthreads = Threads.nthreads()
+  println("Number of threads: $Nthreads")
+end
+
+function make_shock_tube()
+  mass_left = rho_left*(center - x1_min)
+  mass_right = rho_right*(x1_max - center)
+  mass_total = mass_left + mass_right
+
+  particle_mass = mass_total / Npart
+
+  Nleft = ceil(mass_left/particle_mass)
+
+  interval_left = particle_mass / rho_left
+  interval_right = particle_mass / rho_right
+
+  for i in 1:Npart
+    if i < Nleft
+      x1 = x1_min + interval_left*(i - 0.5)
+      rho = rho_left
+      P = P_left
+    else
+      x1 = center + interval_right*((i - Nleft) - 0.5)
+      rho = rho_right
+      P = P_right
     end
+    v1 = 0
+    m = particle_mass
+    sph[i] = Ptype(x1, v1, m, rho, P)
   end
 
-  if boundary == "fixed"
-    global active_particle = sortperm(x1_array)[Nngb: end-Nngb]
-  end
-
+  global active_particle = Nngb:Npart - Nngb
 end
