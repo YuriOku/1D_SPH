@@ -38,7 +38,7 @@ end
 
 function eos_P(i::Int)
     if sph[i].U < 0
-        @show i, sph[i].x1, sph[i].p1 / sph[i].m
+        @show i, sph[i].x, sph[i].p / sph[i].m
     end
     @assert sph[i].U > 0
     P = (gamma - 1) * sph[i].rho / sph[i].m * sph[i].U
@@ -47,7 +47,7 @@ end
 
 function eos_rho(i::Int)
   if sph[i].U < 0
-      @show i, sph[i].x1, sph[i].p1 / sph[i].m
+      @show i, sph[i].x, sph[i].p / sph[i].m
   end
   @assert sph[i].U > 0
   rho = sph[i].P/(gamma - 1)*sph[i].m/sph[i].U

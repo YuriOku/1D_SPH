@@ -1,8 +1,8 @@
 # In this file, data structure of particle and basic functions are defined.
 
 mutable struct Ptype
-  x1::Float64
-  p1::Float64
+  x::Float64
+  p::Float64
   m::Float64
   rho::Float64
   U::Float64
@@ -14,10 +14,10 @@ mutable struct Ptype
 
   list::Array{Int, 1}
 
-  function Ptype(x1, v1, m, rho, P)
-    p1 = m*v1
+  function Ptype(x, v, m, rho, P)
+    p = m*v
     U = P/(gamma - 1)*m/rho
-    return new(x1, p1, m, rho, U, P, 0, 0, 0, [])
+    return new(x, p, m, rho, U, P, 0, 0, 0, [])
   end
 end
 
@@ -36,24 +36,24 @@ function y(i::Int)
   end
 end
 
-function v1(i::Int)
-  return sph[i].p1/sph[i].m
+function v(i::Int)
+  return sph[i].p/sph[i].m
 end
 
 function dist(i::Int, j::Int)
-  rij = abs(sph[i].x1 - sph[j].x1)
+  rij = abs(sph[i].x - sph[j].x)
   return rij 
 end
 
 function eij(i::Int, j::Int)
-  rij = abs(sph[i].x1 - sph[j].x1)
-  eij = (sph[i].x1 - sph[j].x1)/rij
+  rij = abs(sph[i].x - sph[j].x)
+  eij = (sph[i].x - sph[j].x)/rij
 
   return eij
 end
 
 function vij(i::Int, j::Int)
-  vij = v1(i) - v1(j)
+  vij = v(i) - v(j)
 
   return vij
 end

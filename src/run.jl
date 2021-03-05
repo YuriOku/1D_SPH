@@ -43,27 +43,25 @@ function evaluate()
 end
 
 function kick_drift(dt)
-    for i in 1:Npart
+    for i in active_particle
 
     # v(t + 0.5dt) = v(t) + a(t)*dt/2
-        sph[i].p1 = sph[i].p1 + sph[i].F1 * 0.5 * dt
+        sph[i].p = sph[i].p + sph[i].F1 * 0.5 * dt
         sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
+
+        # r(t + dt) = r(t) + v(t + 0.5dt)*dt
+        sph[i].x = sph[i].x + sph[i].p / sph[i].m * dt
 
     # refresh
         sph[i].F1 = 0
         sph[i].dU = 0
     end
-
-    for i in active_particle
-        # r(t + dt) = r(t) + v(t + 0.5dt)*dt
-        sph[i].x1 = sph[i].x1 + sph[i].p1 / sph[i].m * dt
-    end
 end
 
 function kick(dt)
-    for i in 1:Npart
+    for i in active_particle
     # v(t + dt) = v(t + 0.5dt) + a(t + 1)*dt/2
-        sph[i].p1 = sph[i].p1 + sph[i].F1 * 0.5 * dt
+        sph[i].p = sph[i].p + sph[i].F1 * 0.5 * dt
         sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
     end
 end
@@ -74,8 +72,8 @@ function diagnose()
   U_sum = 0
   U_sum_abs = 0
   for i in 1:length(sph)
-    p_sum += sph[i].p1
-    p_sum_abs += abs(sph[i].p1)
+    p_sum += sph[i].p
+    p_sum_abs += abs(sph[i].p)
     U_sum += sph[i].U
     U_sum_abs += abs(sph[i].U)
   end

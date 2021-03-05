@@ -1,4 +1,4 @@
 function finish()
   println("finishing...")
-  output(1, 0)
+  output(t, 0)
 end

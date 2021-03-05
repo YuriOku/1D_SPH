@@ -36,20 +36,25 @@ gamma = 1.4
 Npart = 500
 
 # simulation box boundaries
-x1_min = -1
-x1_max = 1
+x_min = -1
+x_max = 1
 center = 0
 
 # density and pressure in the left side
 rho_left = 1
+v_left = 0
 P_left = 1
 
 # density and pressure in the right side
 rho_right = 0.25
+v_right = 0
 P_right = 0.1795
 
 # plot density, pressure and velocity: true, false
-plot_figure = false
+plot_figure = true
+
+# tolerance criterion in iterative process in exact Riemann solver
+TOL = 1e-6
 
 # calculation
 
@@ -58,6 +63,12 @@ if plot_figure
   using Plots
   ENV["GKSwstype"] = "100"
   gr()
+  rho_max = 1.1
+  rho_min = 0.2
+  v_max = 1
+  v_min = 0
+  P_max = 1.1
+  P_min = 0.15
 end
 using Printf
 
@@ -69,6 +80,7 @@ include("./src/evaluate.jl")
 include("./src/kernel.jl")
 include("./src/timestep.jl")
 include("./src/output.jl")
+include("./src/exact_riemann.jl")
 
 initialize()
 run()
