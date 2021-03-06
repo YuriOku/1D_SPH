@@ -12,6 +12,7 @@ function P_star()
     P1 = P0 - f(P0)/dfdP(P0)
     CHA = abs(P1 - P0)/0.5/(P1 + P0)
     P0 = P1
+    @show P0
   end
 
   return P0
@@ -24,10 +25,12 @@ end
 function region(x, t, v, P, center = 0)
   # 1: left 
   # 2: right
-  # 3: left star
-  # 4: right star
-  # 5: left rarefaction fan
-  # 6: right rarefaction fan
+  # 3: left star (shock)
+  # 4: right star (shock)
+  # 5: left star (rarefaction)
+  # 6: right star (rarefaction)
+  # 7: left rarefaction fan
+  # 8: right rarefaction fan
 
   S = (x - center)/t
   if S < v # left from contact discontinuity
@@ -41,9 +44,9 @@ function region(x, t, v, P, center = 0)
       if S < S_head_left() # outside
         return 1 #"left"
       elseif S < S_tail_left(P) # inside rarefaction fan
-        return 5 #"left rarefaction fan"
+        return 7 #"left rarefaction fan"
       else
-        return 3 #"left star"
+        return 5 #"left star"
       end
     end
   else # right from contact discontinuity
@@ -57,9 +60,9 @@ function region(x, t, v, P, center = 0)
       if S > S_head_right()
         return 2 #"right"
       elseif S > S_tail_right(P)
-        return 6 #"right rarefaction fan"
+        return 8 #"right rarefaction fan"
       else
-        return 4 #"right star"
+        return 6 #"right star"
       end
     end
   end
@@ -71,13 +74,17 @@ function rho_riemann(x, t, v, P, center = 0)
     return rho_left
   elseif reg == 2 #"right"
     return rho_right
-  elseif reg == 3 #"left star"
+  elseif reg == 3 # left star (shock)
+    return rho_left * (P/P_left + (gamma - 1)/(gamma + 1))/((gamma -1 )/(gamma + 1)*P/P_left + 1)
+  elseif reg == 4 # right star (shock)
+    return rho_right * (P/P_right + (gamma - 1)/(gamma + 1))/((gamma -1 )/(gamma + 1)*P/P_right + 1)
+  elseif reg == 5 #"left star (rarefaction)"
     return rho_left*(P/P_left)^(1/gamma)
-  elseif reg == 4 #"right star"
+  elseif reg == 6 #"right star (rarefaction"
     return rho_right*(P/P_right)^(1/gamma)
-  elseif reg == 5 #"left rarefaction fan"
+  elseif reg == 7 #"left rarefaction fan"
     return rho_left*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aL() * (v_left - x/t))^(2/(gamma - 1))
-  elseif reg == 6 #"right rarefaction fan"
+  elseif reg == 8 #"right rarefaction fan"
     return rho_right*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2/(gamma - 1))
   else
     @assert 0
@@ -90,11 +97,11 @@ function v_riemann(x, t, v, P, center = 0)
     return v_left
   elseif reg == 2 #"right"
     return v_right
-  elseif reg == 3 || reg == 4 #"left star" || "right star"
+  elseif reg == 3 || reg == 4 || reg == 5 || reg == 6 #"left star" || "right star"
     return v
-  elseif reg == 5 #"left rarefaction fan"
+  elseif reg == 7 #"left rarefaction fan"
     return 2/(gamma + 1)*(aL() + (gamma - 1)/2*v_left + x/t)
-  elseif reg == 6 #"right rarefaction fan"
+  elseif reg == 8 #"right rarefaction fan"
     return 2/(gamma + 1)*(-aR() + (gamma - 1)/2*v_right + x/t)
   else
     @assert 0
@@ -107,11 +114,11 @@ function P_riemann(x, t, v, P, center = 0)
     return P_left
   elseif reg == 2 #"right"
     return P_right
-  elseif reg == 3 || reg == 4 #"left star" || "right star"
+  elseif reg == 3 || reg == 4 || reg == 5 || reg == 6 #"left star" || "right star"
     return P
-  elseif reg == 5 #"left rarefaction fan"
+  elseif reg == 7 #"left rarefaction fan"
     return P_left*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aL() * (v_left - x/t))^(2*gamma / (gamma - 1))
-  elseif reg == 6 #"right rarefaction fan"
+  elseif reg == 8 #"right rarefaction fan"
     return P_right*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2*gamma / (gamma - 1))
   else
     @assert 0
@@ -138,7 +145,7 @@ end
 
 function dfdP_left(P)
     if P > P_left 
-        dfdP = sqrt(AL() / (BL() + P)) * (1 - (P - P_left) / 2 / (BL() + P_left))
+        dfdP = sqrt(AL() / (BL() + P)) * (1 - (P - P_left) / 2 / (BL() + P))
     else
         dfdP = 1 / rho_left / aL() * (P / P_left)^(-(gamma + 1) / 2 / gamma)
     end
@@ -147,7 +154,7 @@ end
 
 function dfdP_right(P)
     if P > P_right 
-        dfdP = sqrt(AR() / (BR() + P)) * (1 - (P - P_right) / 2 / (BR() + P_right))
+        dfdP = sqrt(AR() / (BR() + P)) * (1 - (P - P_right) / 2 / (BR() + P))
     else
         dfdP = 1 / rho_right / aR() * (P / P_right)^(-(gamma + 1) / 2 / gamma)
     end
