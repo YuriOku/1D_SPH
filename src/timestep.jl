@@ -2,14 +2,20 @@ function timestep()
   dt = dt_max
   for i in active_particle
     @assert sph[i].P > 0
-    for j in sph[i].list
-      vsig = cs(i) + cs(j) - 3*eij(i,j)*vij(i,j)
-      dt_ij = cfl * sph[i].hsml/vsig
-
-      if !isnan(dt_ij) && dt_ij > 0
-        dt = min(dt, dt_ij)
+    j = index_list[i]
+    j_min = max(1, j - Nngb)
+    j_max = min(Npart, j + Nngb)
+    vmax = 0
+    for j in j_min:j_max
+      k = index_order[j]
+      vsig = cs(i) + cs(k) - 3*eij(i,k)*vij(i,k)
+      if vsig > vmax
+        vmax = vsig
       end
     end
+    dt_i = cfl * 2 * sph[i].hsml / vmax
+    @assert dt_i > 0
+    dt = min(dt, dt_i)
   end
   return dt
 end

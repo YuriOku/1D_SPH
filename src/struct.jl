@@ -12,12 +12,14 @@ mutable struct Ptype
   dU::Float64
   hsml::Float64
 
-  list::Array{Int, 1}
+  divv::Float64
+  alpha::Float64
+  dalpha::Float64
 
   function Ptype(x, v, m, rho, P)
     p = m*v
     U = P/(gamma - 1)*m/rho
-    return new(x, p, m, rho, U, P, 0, 0, 0, [])
+    return new(x, p, m, rho, U, P, 0, 0, 0, 0, 1, 0)
   end
 end
 

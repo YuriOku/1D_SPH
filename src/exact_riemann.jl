@@ -14,7 +14,6 @@ function P_star()
     P0 = P1
     @show P0
   end
-
   return P0
 end
 
@@ -85,7 +84,7 @@ function rho_riemann(x, t, v, P, center = 0)
   elseif reg == 7 #"left rarefaction fan"
     return rho_left*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aL() * (v_left - x/t))^(2/(gamma - 1))
   elseif reg == 8 #"right rarefaction fan"
-    return rho_right*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2/(gamma - 1))
+    return rho_right*(2/(gamma + 1) - (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2/(gamma - 1))
   else
     @assert 0
   end
@@ -119,7 +118,7 @@ function P_riemann(x, t, v, P, center = 0)
   elseif reg == 7 #"left rarefaction fan"
     return P_left*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aL() * (v_left - x/t))^(2*gamma / (gamma - 1))
   elseif reg == 8 #"right rarefaction fan"
-    return P_right*(2/(gamma + 1) + (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2*gamma / (gamma - 1))
+    return P_right*(2/(gamma + 1) - (gamma - 1)/(gamma + 1)/aR() * (v_right - x/t))^(2*gamma / (gamma - 1))
   else
     @assert 0
   end

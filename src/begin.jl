@@ -12,6 +12,8 @@ function initialize()
 
   make_shock_tube()
 
+  initialize_exact_riemann_solver()
+
   Nthreads = Threads.nthreads()
   println("Number of threads: $Nthreads")
 end
@@ -45,4 +47,9 @@ function make_shock_tube()
   end
 
   global active_particle = Nngb:Npart - Nngb
+end
+
+function initialize_exact_riemann_solver()
+  global P_s = P_star()
+  global v_s = v_star(P_s)
 end
