@@ -2,17 +2,23 @@ function initialize()
   println("begin.")
   global t = t_start
   global t_output = output_interval
-  global output_count = 0
+  global output_count = 1
 
   global lbox = x_max - x_min
   global sph = Array{Ptype, 1}(undef, Npart)
 
-  global p_initial = 0
-  global U_initial = P_left/(gamma - 1)*(center - x_min) + P_right/(gamma - 1)*(x_max - center)
-
   make_shock_tube()
 
   initialize_exact_riemann_solver()
+
+  if debug
+    global p_initial = 0
+    global E_initial = 0
+    for i in 1:length(sph)
+      p_initial += sph[i].p
+      E_initial += sph[i].U + 0.5*sph[i].p^2/sph[i].m
+    end
+  end
 
   Nthreads = Threads.nthreads()
   println("Number of threads: $Nthreads")
@@ -46,10 +52,28 @@ function make_shock_tube()
     sph[i] = Ptype(x, v, m, rho, P)
   end
 
-  global active_particle = Nngb:Npart - Nngb
+  if !debug
+    global active_particle = Nngb:Npart - Nngb
+  else
+    global active_particle = 1:Npart
+  end
 end
 
 function initialize_exact_riemann_solver()
   global P_s = P_star()
   global v_s = v_star(P_s)
+  
+  step_riemann = lbox / Nsample_riemann
+  x_riemann = x_min:step_riemann:x_max
+  rho_riemann_array = map(x -> rho_riemann(x, t_end, v_s, P_s, center), x_riemann)
+  v_riemann_array = map(x -> v_riemann(x, t_end, v_s, P_s, center), x_riemann)
+  P_riemann_array = map(x -> P_riemann(x, t_end, v_s, P_s, center), x_riemann)
+
+  # y-axis limits
+  global rho_max = maximum(rho_riemann_array) + 0.1
+  global rho_min = minimum(rho_riemann_array) - 0.1
+  global v_max = maximum(v_riemann_array) + 0.1
+  global v_min = minimum(v_riemann_array) - 0.1
+  global P_max = maximum(P_riemann_array) + 0.1
+  global P_min = minimum(P_riemann_array) - 0.1
 end

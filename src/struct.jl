@@ -19,7 +19,7 @@ mutable struct Ptype
   function Ptype(x, v, m, rho, P)
     p = m*v
     U = P/(gamma - 1)*m/rho
-    return new(x, p, m, rho, U, P, 0, 0, 0, 0, 1, 0)
+    return new(x, p, m, rho, U, P, 0, 0, 0, 0, alpha_min, 0)
   end
 end
 

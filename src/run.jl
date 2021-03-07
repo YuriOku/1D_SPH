@@ -8,7 +8,7 @@ function run()
     while t < t_end
         dt = timestep()
 
-        Printf.@printf("t = %5f, dt = %.5e\n", t, dt)
+        std_output(dt)
 
         kick_drift(dt)
     
@@ -54,7 +54,7 @@ function kick_drift(dt)
 
         # v(t + 0.5dt) = v(t) + a(t)*dt/2
         sph[i].p = sph[i].p + sph[i].F1 * 0.5 * dt
-        sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
+        sph[i].U = sph[i].U + sph[i].dU * 0.5 * dt
 
         # r(t + dt) = r(t) + v(t + 0.5dt)*dt
         sph[i].x = sph[i].x + sph[i].p / sph[i].m * dt
@@ -74,21 +74,30 @@ function kick(dt)
     Threads.@threads for i in active_particle
         # v(t + dt) = v(t + 0.5dt) + a(t + dt)*dt/2
         sph[i].p = sph[i].p + sph[i].F1 * 0.5 * dt
-        sph[i].U  = sph[i].U  + sph[i].dU * 0.5 * dt
+        sph[i].U = sph[i].U + sph[i].dU * 0.5 * dt
+    end
+end
+
+function std_output(dt)
+    if !debug
+        Printf.@printf("t = %5f, dt = %.5e\n", t, dt)
+    else
+        diagnose()
+        Printf.@printf("t = %5f, dt = %.5e, p_err = %.8e, E_err = %.8e\n", t, dt, p_error, E_error)
     end
 end
 
 function diagnose()
   p_sum = 0
   p_sum_abs = 0
-  U_sum = 0
-  U_sum_abs = 0
+  E_sum = 0
+  E_sum_abs = 0
   for i in 1:length(sph)
     p_sum += sph[i].p
     p_sum_abs += abs(sph[i].p)
-    U_sum += sph[i].U
-    U_sum_abs += abs(sph[i].U)
+    E_sum += sph[i].U + 0.5*sph[i].p^2/sph[i].m
+    E_sum_abs += abs(sph[i].U + 0.5*sph[i].p^2/sph[i].m)
   end
   global p_error = (p_sum - p_initial)/p_sum_abs
-  global U_error = (U_sum - U_initial)/U_sum_abs
+  global E_error = (E_sum - E_initial)/E_sum_abs
 end

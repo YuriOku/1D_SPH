@@ -4,9 +4,7 @@ function output(t, t_output)
         v_array = []
         rho_array = []
         P_array = []
-        output_number = string(output_count)
-        outputfilename = outputfile * output_number * ".txt"
-
+        outputfilename = @sprintf("%s_%03d.txt", outputfile, output_count)
 
         open(outputfilename, "w") do io
             println(io, "### x, v, rho, P")
@@ -15,12 +13,12 @@ function output(t, t_output)
                 v = sph[i].p / sph[i].m
                 rho = sph[i].rho
                 P = sph[i].P
-                alpha = sph[i].alpha
+                hsml = sph[i].hsml
                 push!(x_array, x)
                 push!(v_array, v)
                 push!(rho_array, rho)
                 push!(P_array, P)
-                println(io, "$x $v $rho $P $alpha")
+                println(io, "$x $v $rho $P $hsml")
             end
         end
         if plot_figure
@@ -30,20 +28,21 @@ function output(t, t_output)
             v_riemann_array = map(x -> v_riemann(x, t, v_s, P_s, center), x_riemann)
             P_riemann_array = map(x -> P_riemann(x, t, v_s, P_s, center), x_riemann)
 
-            plt_rho = Plots.plot(ylabel="rho", title="$formulation, $gradient, $kernel, $volume_element", ylims=(rho_min, rho_max))
-            plt_rho = Plots.plot!(x_riemann, rho_riemann_array, label="analytic")
+            plt_rho = Plots.plot(ylabel="rho", title="$formulation, $gradient, \n$kernel, $volume_element, TDAV:$time_dependent_viscosity", ylims=(rho_min, rho_max), xlims=(x_min_plot, x_max_plot))
+            plt_rho = Plots.plot!(x_riemann, rho_riemann_array, label="exact")
             plt_rho = Plots.scatter!(x_array, rho_array, markersize=2, label="sim")
 
-            plt_P = Plots.plot(ylabel="P", xlabel="x", ylims=(P_min, P_max))
-            plt_P = Plots.plot!(x_riemann, P_riemann_array, label="analytic")
+            plt_P = Plots.plot(ylabel="P", xlabel="x", ylims=(P_min, P_max), xlims=(x_min_plot, x_max_plot))
+            plt_P = Plots.plot!(x_riemann, P_riemann_array, label="exact")
             plt_P = Plots.scatter!(x_array, P_array, markersize=2, label="sim")
 
-            plt_v = Plots.plot(ylabel="v", ylims=(v_min, v_max))
-            plt_v = Plots.plot!(x_riemann, v_riemann_array, label="analytic")
+            plt_v = Plots.plot(ylabel="v", ylims=(v_min, v_max), xlims=(x_min_plot, x_max_plot))
+            plt_v = Plots.plot!(x_riemann, v_riemann_array, label="exact")
             plt_v = Plots.scatter!(x_array, v_array, markersize=2, label="sim")
 
             Plots.plot(plt_rho, plt_v, plt_P, layout=(3, 1), size=(400, 600))
-            Plots.savefig(outputfile * "_fig_" * output_number * ".png")
+            figname = @sprintf("%s_fig_%03d.png", outputfile, output_count)
+            Plots.savefig(figname)
         end
         global t_output += output_interval
         global output_count += 1

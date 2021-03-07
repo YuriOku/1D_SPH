@@ -13,7 +13,7 @@ function timestep()
         vmax = vsig
       end
     end
-    dt_i = cfl * 2 * sph[i].hsml / vmax
+    dt_i = cfl * sph[i].hsml / vmax
     @assert dt_i > 0
     dt = min(dt, dt_i)
   end
