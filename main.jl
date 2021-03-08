@@ -13,6 +13,9 @@ formulation = "vanilla ice"
 # volume element: "mass", "U"
 volume_element = "U"
 
+# time integrator: "RK2", "VL2", "leap frog", "symplectic Euler"
+time_integrator = "leap frog"
+
 # output file name
 outputfile = "out/out"
 
@@ -56,9 +59,9 @@ v_left = 0
 P_left = 1
 
 # density and pressure in the right side
-rho_right = 1
+rho_right = 0.25
 v_right = 0
-P_right = 0.1
+P_right = 0.1795
 
 # plot density, pressure and velocity: true, false
 plot_figure = true
@@ -71,7 +74,7 @@ Nsample_riemann = 1e3
 TOL = 1e-6
 
 # check conservation of momentum and energy
-debug = false
+debug = true
 
 # calculation
 
@@ -84,15 +87,16 @@ end
 using Printf
 
 include("./src/begin.jl")
-include("./src/run.jl")
-include("./src/finish.jl")
-include("./src/struct.jl")
 include("./src/evaluate.jl")
-include("./src/force.jl")
-include("./src/kernel.jl")
-include("./src/timestep.jl")
-include("./src/output.jl")
 include("./src/exact_riemann.jl")
+include("./src/finish.jl")
+include("./src/force.jl")
+include("./src/integrate.jl")
+include("./src/kernel.jl")
+include("./src/output.jl")
+include("./src/run.jl")
+include("./src/struct.jl")
+include("./src/timestep.jl")
 
 initialize()
 run()

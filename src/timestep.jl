@@ -6,9 +6,9 @@ function timestep()
     j_min = max(1, j - Nngb)
     j_max = min(Npart, j + Nngb)
     vmax = 0
-    for j in j_min:j_max
+    for j = j_min:j_max
       k = index_order[j]
-      vsig = cs(i) + cs(k) - 3*eij(i,k)*vij(i,k)
+      vsig = cs(i) + cs(k) - 3 * eij(i, k) * vij(i, k)
       if vsig > vmax
         vmax = vsig
       end

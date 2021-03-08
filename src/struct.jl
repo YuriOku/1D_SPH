@@ -8,18 +8,47 @@ mutable struct Ptype
   U::Float64
   P::Float64
 
+  p_old::Float64
+  U_old::Float64
+
   F1::Float64
   dU::Float64
   hsml::Float64
 
   divv::Float64
   alpha::Float64
+  alpha_old::Float64
   dalpha::Float64
 
   function Ptype(x, v, m, rho, P)
-    p = m*v
-    U = P/(gamma - 1)*m/rho
-    return new(x, p, m, rho, U, P, 0, 0, 0, 0, alpha_min, 0)
+    p = m * v
+    U = P / (gamma - 1) * m / rho
+    p_old = 0
+    U_old = 0
+    F1 = 0
+    dU = 0
+    hsml = 0
+    divv = 0
+    alpha = alpha_min
+    alpha_old = 0
+    dalpha = 0
+    return new(
+      x,
+      p,
+      m,
+      rho,
+      U,
+      P,
+      p_old,
+      U_old,
+      F1,
+      dU,
+      hsml,
+      divv,
+      alpha,
+      alpha_old,
+      dalpha,
+    )
   end
 end
 
@@ -34,22 +63,22 @@ function y(i::Int)
   if volume_element == "mass"
     return sph[i].rho
   elseif volume_element == "U"
-    return sph[i].P/(gamma - 1)
+    return sph[i].P / (gamma - 1)
   end
 end
 
 function v(i::Int)
-  return sph[i].p/sph[i].m
+  return sph[i].p / sph[i].m
 end
 
 function dist(i::Int, j::Int)
   rij = abs(sph[i].x - sph[j].x)
-  return rij 
+  return rij
 end
 
 function eij(i::Int, j::Int)
   rij = abs(sph[i].x - sph[j].x)
-  eij = (sph[i].x - sph[j].x)/rij
+  eij = (sph[i].x - sph[j].x) / rij
 
   return eij
 end
