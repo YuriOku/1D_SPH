@@ -14,7 +14,7 @@ function initialize()
   if debug
     global p_initial = 0
     global E_initial = 0
-    for i in 1:length(sph)
+    for i = 1:length(sph)
       p_initial += sph[i].p
       E_initial += sph[i].U + 0.5 * sph[i].p^2 / sph[i].m
     end
@@ -36,7 +36,7 @@ function make_shock_tube()
   interval_left = particle_mass / rho_left
   interval_right = particle_mass / rho_right
 
-  for i in 1:Npart
+  for i = 1:Npart
     if i < Nleft
       x = x_min + interval_left * (i - 0.5)
       rho = rho_left
@@ -53,7 +53,7 @@ function make_shock_tube()
   end
 
   if !debug
-    global active_particle = Nngb:(Npart - Nngb)
+    global active_particle = Nngb:(Npart-Nngb)
   else
     global active_particle = 1:Npart
   end
@@ -70,10 +70,16 @@ function initialize_exact_riemann_solver()
   P_riemann_array = map(x -> P_riemann(x, t_end, v_s, P_s, center), x_riemann)
 
   # y-axis limits
-  global rho_max = maximum(rho_riemann_array) + 0.1
-  global rho_min = minimum(rho_riemann_array) - 0.1
-  global v_max = maximum(v_riemann_array) + 0.1
-  global v_min = minimum(v_riemann_array) - 0.1
-  global P_max = maximum(P_riemann_array) + 0.1
-  return global P_min = minimum(P_riemann_array) - 0.1
+  global rho_max = maximum(rho_riemann_array)
+  global rho_min = minimum(rho_riemann_array)
+  global v_max = maximum(v_riemann_array)
+  global v_min = minimum(v_riemann_array)
+  global P_max = maximum(P_riemann_array)
+  global P_min = minimum(P_riemann_array)
+  rho_max = rho_max + 0.1 * (rho_max - rho_min)
+  rho_min = rho_min - 0.1 * (rho_max - rho_min)
+  v_max = v_max + 0.1 * (v_max - v_min)
+  v_min = v_min - 0.1 * (v_max - v_min)
+  P_max = P_max + 0.1 * (P_max - P_min)
+  P_min = P_min - 0.1 * (P_max - P_min)
 end

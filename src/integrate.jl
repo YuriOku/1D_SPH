@@ -1,17 +1,29 @@
 function integrate(dt)
-  if time_integrator == "leap frog"
+  if time_integrator == "leapfrog"
     kick_drift(0.5 * dt, dt)
     evaluate()
     kick(0.5 * dt)
+  elseif time_integrator == "modified leapfrog"
+    kick_drift(0.5 * dt, dt)
+    evaluate()
+    kick(0.5 * dt)
+    evaluate()
   elseif time_integrator == "RK2"
-    kick_drift(0.5 * dt, dt)
+    RK(0, 1, 1, dt, 1)
     evaluate()
-    kick(0.5 * dt)
+    RK(0.5, 0.5, 0.5, dt, 2)
     evaluate()
   elseif time_integrator == "VL2"
-    VL2_s0(dt)
+    RK(0, 1, 0.5, dt, 1)
     evaluate()
-    VL2_s1(dt)
+    RK(0, 1, 1, dt, 2)
+    evaluate()
+  elseif time_integrator == "RK3"
+    RK(0, 1, 1, dt, 1)
+    evaluate()
+    RK(0.25, 0.75, 0.25, dt, 2)
+    evaluate()
+    RK(2/3, 1/3, 2/3, dt, 3)
     evaluate()
   elseif time_integrator == "symplectic Euler"
     symplectic_euler(dt)
@@ -75,41 +87,28 @@ function symplectic_euler(dt)
   end
 end
 
-# van Leer predictor-corrector midpoint integrator
-function VL2_s0(dt)
+# Algorithm 3 of Ketcheson (2010). See also Stone et al. (2020).
+function RK(g1, g2, beta, dt, stage)
   Threads.@threads for i in active_particle
-    x_old = sph[i].x
-    p_old = sph[i].p
-    U_old = sph[i].U
-
-    # predict midpoint
-    sph[i].x = x_old + p_old / sph[i].m * 0.5 * dt
-    sph[i].p = p_old + sph[i].F1 * 0.5 * dt
-    sph[i].U = U_old + sph[i].dU * 0.5 * dt
-
-    # store variables
-    sph[i].p_old = p_old
-    sph[i].U_old = U_old
-
-    if time_dependent_viscosity
-      alpla_old = sph[i].alpha
-      sph[i].alpha = alpha_old + sph[i].dalpla * 0.5 * dt
+    if stage == 1
+      x_old = sph[i].x
+      p_old = sph[i].p
+      U_old = sph[i].U
+      alpha_old = sph[i].alpha
+      sph[i].x_old = x_old
+      sph[i].p_old = p_old
+      sph[i].U_old = U_old
       sph[i].alpha_old = alpha_old
+    else
+      x_old = sph[i].x_old
+      p_old = sph[i].p_old
+      U_old = sph[i].U_old
+      alpha_old = sph[i].alpha_old
     end
-  end
-end
 
-function VL2_s1(dt)
-  Threads.@threads for i in active_particle
-    p_old = sph[i].p_old
-    U_old = sph[i].U_old
-    x_old = sph[i].x - p_old / sph[i].m * 0.5 * dt
-    sph[i].x = x_old + sph[i].p / sph[i].m * dt
-    sph[i].p = p_old + sph[i].F1 * dt
-    sph[i].U = U_old + sph[i].dU * dt
-
-    if time_dependent_viscosity
-      sph[i].alpha = sph[i].alpha_old + sph[i].dalpha * dt
-    end
+    sph[i].x = g1 * sph[i].x + g2 * x_old + sph[i].p / sph[i].m * beta * dt
+    sph[i].p = g1 * sph[i].p + g2 * p_old + sph[i].F1 * beta * dt
+    sph[i].U = g1 * sph[i].U + g2 * U_old + sph[i].dU * beta * dt
+    sph[i].alpha = g1 * sph[i].alpha + g2 * alpha_old + sph[i].dalpha * beta * dt
   end
 end

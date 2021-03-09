@@ -8,6 +8,7 @@ mutable struct Ptype
   U::Float64
   P::Float64
 
+  x_old::Float64
   p_old::Float64
   U_old::Float64
 
@@ -23,6 +24,7 @@ mutable struct Ptype
   function Ptype(x, v, m, rho, P)
     p = m * v
     U = P / (gamma - 1) * m / rho
+    x_old = 0
     p_old = 0
     U_old = 0
     F1 = 0
@@ -39,6 +41,7 @@ mutable struct Ptype
       rho,
       U,
       P,
+      x_old,
       p_old,
       U_old,
       F1,

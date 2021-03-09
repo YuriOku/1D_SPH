@@ -13,8 +13,8 @@ formulation = "vanilla ice"
 # volume element: "mass", "U"
 volume_element = "U"
 
-# time integrator: "RK2", "VL2", "leap frog", "symplectic Euler"
-time_integrator = "leap frog"
+# time integrator: "RK2", "VL2", "RK3", "leapfrog", "modified leapfrog", "symplectic Euler"
+time_integrator = "modified leapfrog"
 
 # output file name
 outputfile = "out/out"
@@ -22,7 +22,7 @@ outputfile = "out/out"
 # The Courant-Friedrichs-Levi (CFL) number
 cfl = 0.3
 
-# time-dependent viscosity
+# time-dependent viscosity. if set to false, alpha = 1.
 time_dependent_viscosity = false
 alpha_max = 1.5
 alpha_min = 0.1
@@ -32,36 +32,36 @@ dt_max = 1
 
 # factor for evaluation of smoothing length
 # this code uses Gadget's definition of smoothing length (smoothing kernel vanishes at 1h rather than at 2h)
-eta_hsml = 2.4
+eta_hsml = 4.8
 
 # maximum number of SPH neighbour particles
 Nngb = 32
 
 # simulation time and output timing
 t_start = 0
-t_end = 0.2
+t_end = 0.013
 output_interval = 0.001
 
 # specific heat ratio
 gamma = 1.4
 
 # number of particles
-Npart = 1000
+Npart = 600
 
 # simulation box boundaries
-x_min = -1
-x_max = 1
+x_min = -0.6
+x_max = 0.6
 center = 0
 
 # density and pressure in the left side
 rho_left = 1
 v_left = 0
-P_left = 1
+P_left = 1000
 
 # density and pressure in the right side
-rho_right = 0.25
+rho_right = 1
 v_right = 0
-P_right = 0.1795
+P_right = 0.01
 
 # plot density, pressure and velocity: true, false
 plot_figure = true

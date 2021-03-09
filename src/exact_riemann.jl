@@ -1,6 +1,6 @@
 # This file contains functions to calculate an analytical solution of Riemann problem.
 # 
-# Reference: Toro, Eleuterio F. Riemann solvers and numerical methods for fluid dynamics: a practical introduction. Springer Science & Business Media, 2013.
+# Reference: Toro (2013)
 
 function P_star()
   # initial guess
