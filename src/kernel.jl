@@ -26,7 +26,6 @@ function W(i, j)
   end
 end
 
-
 function gradW(i, j)
   h = sph[i].hsml
   invh = 1 / h
@@ -62,21 +61,18 @@ function dWdh(i, j)
 
   if gradient == "standard"
     if kernel == "cubic spline"
-      norm = 4 / 3 * invh
       if r > 1
         return 0
       elseif r > 0.5
-        return norm * 6 * (1 - r)^2 * (r * invh)
+        return -8 / 3 * invh * (1 - r)^2 * (1 + r)
       else
-        return norm * (-12 * r * (-r * invh) + 18 * r^2 * (-r * invh))
+        return -4 / 3 * invh * (1 - 18 * r^2 + 24 * r^3)
       end
     elseif kernel == "Wendland C2"
-      norm = 5 / 4 * invh
       if r > 1
         return 0
       else
-        return norm *
-               (-3 * (1 - r)^2 * (1 + 3 * r) * (-r * invh) + 3 * (1 - r)^3 * (-r * invh))
+        return 5 / 4 * invh^2 * (1 - r)^2 * (3 * r - 1) * (5 * r + 1)
       end
     else
       @assert 0

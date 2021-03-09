@@ -1,4 +1,4 @@
-# In this file, data structure of particle and basic functions are defined.
+# Data structure of particle and basic functions are defined in this file.
 
 mutable struct Ptype
   x::Float64
@@ -21,6 +21,8 @@ mutable struct Ptype
   alpha_old::Float64
   dalpha::Float64
 
+  dydh::Float64
+
   function Ptype(x, v, m, rho, P)
     p = m * v
     U = P / (gamma - 1) * m / rho
@@ -34,6 +36,7 @@ mutable struct Ptype
     alpha = alpha_min
     alpha_old = 0
     dalpha = 0
+    dydh = 0
     return new(
       x,
       p,
@@ -51,6 +54,7 @@ mutable struct Ptype
       alpha,
       alpha_old,
       dalpha,
+      dydh,
     )
   end
 end
@@ -62,6 +66,7 @@ function Z(i::Int)
     return sph[i].U
   end
 end
+
 function y(i::Int)
   if volume_element == "mass"
     return sph[i].rho

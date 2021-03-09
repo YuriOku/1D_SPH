@@ -107,11 +107,11 @@ function evaluate_hsml(i)
     h1 = h0 - g(i) / dgdh(i)
     CHA = abs(h0 - h1) / 2 / (h0 + h1)
     h0 = h1
-    # h0 = 0.1*(h1 - h0) + h0
     iter += 1
     if iter > 1e4
       sph[i].hsml = h0
-      println("iteration loop of density evaluation exceeds 1e4. h0 = $h0")
+      gi = g(i)
+      println("iteration loop of hsml evaluation exceeds 1e4. h0 = $h0, CHA = $CHA, g(i) = $gi")
       break
     end
   end
@@ -122,13 +122,16 @@ function g(i)
 end
 
 function dgdh(i)
-  dgdh = 1
+  drhodh = 0
+  sph[i].dydh = 0
   j = index_list[i]
   j_min = max(1, j - Nngb)
   j_max = min(Npart, j + Nngb)
   for j in j_min:j_max
     k = index_order[j]
-    dgdh += eta_hsml * sph[i].m / sph[i].rho^2 * sph[k].m * dWdh(i, k)
+    drhodh += sph[k].m * dWdh(i, k)
+    sph[i].dydh += Z(k) * dWdh(i, k)
   end
+  dgdh = 1 + eta_hsml * sph[i].m / sph[i].rho^2 * drhodh
   return dgdh
 end

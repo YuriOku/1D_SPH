@@ -7,7 +7,7 @@ The Sod shock tube problem is generated and solved by the SPH scheme.
 2. (optional) `export JULIA_NUM_THREAD=8`
 3. `julia main.jl`
 
-# Reference
+# References
 ## review papers on SPH scheme
 - Rosswog, S., ``Astrophysical smooth particle hydrodynamics'', <i>New Astronomy Reviews</i>, vol. 53, no. 4–6, pp. 78–104, 2009. doi:10.1016/j.newar.2009.08.007.
 - Rosswog, S., ``SPH Methods in the Modelling of Compact Objects'', <i>Living Reviews in Computational Astrophysics</i>, vol. 1, no. 1, 2015. doi:10.1007/lrca-2015-1.

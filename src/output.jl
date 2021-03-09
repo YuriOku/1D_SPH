@@ -13,7 +13,7 @@ function output(t, t_output)
         v = sph[i].p / sph[i].m
         rho = sph[i].rho
         P = sph[i].P
-        hsml = sph[i].hsml
+        hsml = grad_h(i)
         push!(x_array, x)
         push!(v_array, v)
         push!(rho_array, rho)
@@ -24,9 +24,9 @@ function output(t, t_output)
     if plot_figure
       step_riemann = lbox / Nsample_riemann
       x_riemann = x_min:step_riemann:x_max
-      rho_riemann_array = map(x -> rho_riemann(x, t, v_s, P_s, center), x_riemann)
-      v_riemann_array = map(x -> v_riemann(x, t, v_s, P_s, center), x_riemann)
-      P_riemann_array = map(x -> P_riemann(x, t, v_s, P_s, center), x_riemann)
+      rho_riemann_array = map(x -> rho_riemann(x, t, v_s, P_s, x_center), x_riemann)
+      v_riemann_array = map(x -> v_riemann(x, t, v_s, P_s, x_center), x_riemann)
+      P_riemann_array = map(x -> P_riemann(x, t, v_s, P_s, x_center), x_riemann)
       settings = "$formulation, $gradient gradient\n$time_integrator, $kernel, η=$eta_hsml\nvolume element: $volume_element\ntime-dependent art. visc.: $time_dependent_viscosity\n"
 
       plt_rho = Plots.plot(; ylabel="rho", title=settings, titlefont=font(12),

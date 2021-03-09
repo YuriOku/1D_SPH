@@ -25,8 +25,8 @@ function initialize()
 end
 
 function make_shock_tube()
-  mass_left = rho_left * (center - x_min)
-  mass_right = rho_right * (x_max - center)
+  mass_left = rho_left * (x_center - x_min)
+  mass_right = rho_right * (x_max - x_center)
   mass_total = mass_left + mass_right
 
   particle_mass = mass_total / Npart
@@ -43,7 +43,7 @@ function make_shock_tube()
       v = v_left
       P = P_left
     else
-      x = center + interval_right * ((i - Nleft) - 0.5)
+      x = x_center + interval_right * ((i - Nleft) - 0.5)
       rho = rho_right
       v = v_right
       P = P_right
@@ -65,9 +65,9 @@ function initialize_exact_riemann_solver()
 
   step_riemann = lbox / Nsample_riemann
   x_riemann = x_min:step_riemann:x_max
-  rho_riemann_array = map(x -> rho_riemann(x, t_end, v_s, P_s, center), x_riemann)
-  v_riemann_array = map(x -> v_riemann(x, t_end, v_s, P_s, center), x_riemann)
-  P_riemann_array = map(x -> P_riemann(x, t_end, v_s, P_s, center), x_riemann)
+  rho_riemann_array = map(x -> rho_riemann(x, t_end, v_s, P_s, x_center), x_riemann)
+  v_riemann_array = map(x -> v_riemann(x, t_end, v_s, P_s, x_center), x_riemann)
+  P_riemann_array = map(x -> P_riemann(x, t_end, v_s, P_s, x_center), x_riemann)
 
   # y-axis limits
   global rho_max = maximum(rho_riemann_array)

@@ -2,9 +2,18 @@ function force(i::Int, j::Int)
   if i == j
     return 0
   end
+
   if formulation == "vanilla ice"
     force_hydro =
       -Z(i) * Z(j) / y(i) / y(j) * (sph[i].P + sph[j].P) * eij(i, j) * gradW_tilde(i, j)
+  elseif formulation == "Lagrangian"
+    force_hydro =
+      -Z(i) * Z(j) * (
+        grad_h(i) * sph[i].P / y(i)^2 * eij(i, j) * gradW(i, j) +
+        grad_h(j) * sph[j].P / y(j)^2 * eij(i, j) * gradW(j, i)
+      )
+  else
+    @assert 0
   end
   force_visc = -sph[i].m * sph[j].m * PI_visc(i, j) * eij(i, j) * gradW_tilde(i, j)
   return force_hydro + force_visc
@@ -14,13 +23,24 @@ function dU(i::Int, j::Int)
   if i == j
     return 0
   end
+
   if formulation == "vanilla ice"
     dU_hydro =
       sph[i].P * Z(i) * Z(j) / y(i) / y(j) * vij(i, j) * eij(i, j) * gradW_tilde(i, j)
+  elseif formulation == "Lagrangian"
+    dU_hydro =
+      grad_h(i) * sph[i].P * Z(i) * Z(j) / y(i)^2 * vij(i, j) * eij(i, j) * gradW(i, j)
+  else
+    @assert 0
   end
   dU_visc =
     0.5 * sph[i].m * sph[j].m * PI_visc(i, j) * vij(i, j) * eij(i, j) * gradW_tilde(i, j)
   return dU_hydro + dU_visc
+end
+
+function grad_h(i)
+  invf = 1 + sph[i].hsml / y(i) * sph[i].dydh
+  return 1/invf
 end
 
 function PI_visc(i, j)

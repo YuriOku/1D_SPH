@@ -21,7 +21,7 @@ function v_star(P)
   return 0.5 * (v_left + v_right) + 0.5(f_right(P) - f_left(P))
 end
 
-function region(x, t, v, P, center = 0)
+function region(x, t, v, P, x_center = 0)
   # 1: left 
   # 2: right
   # 3: left star (shock)
@@ -31,7 +31,7 @@ function region(x, t, v, P, center = 0)
   # 7: left rarefaction fan
   # 8: right rarefaction fan
 
-  S = (x - center) / t
+  S = (x - x_center) / t
   if S < v # left from contact discontinuity
     if P > P_left # shock
       if S < S_shock_left(P) # outside shock
@@ -67,8 +67,8 @@ function region(x, t, v, P, center = 0)
   end
 end
 
-function rho_riemann(x, t, v, P, center = 0)
-  reg = region(x, t, v, P, center)
+function rho_riemann(x, t, v, P, x_center = 0)
+  reg = region(x, t, v, P, x_center)
   if reg == 1 #"left"
     return rho_left
   elseif reg == 2 #"right"
@@ -98,8 +98,8 @@ function rho_riemann(x, t, v, P, center = 0)
   end
 end
 
-function v_riemann(x, t, v, P, center = 0)
-  reg = region(x, t, v, P, center)
+function v_riemann(x, t, v, P, x_center = 0)
+  reg = region(x, t, v, P, x_center)
   if reg == 1 #"left"
     return v_left
   elseif reg == 2 #"right"
@@ -115,8 +115,8 @@ function v_riemann(x, t, v, P, center = 0)
   end
 end
 
-function P_riemann(x, t, v, P, center = 0)
-  reg = region(x, t, v, P, center)
+function P_riemann(x, t, v, P, x_center = 0)
+  reg = region(x, t, v, P, x_center)
   if reg == 1 #"left"
     return P_left
   elseif reg == 2 #"right"
