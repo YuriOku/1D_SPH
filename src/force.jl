@@ -3,19 +3,19 @@ function force(i::Int, j::Int)
     return 0
   end
 
-  if formulation == "vanilla ice"
+  if formulation == "VanillaIce"
     force_hydro =
-      -Z(i) * Z(j) / y(i) / y(j) * (sph[i].P + sph[j].P) * eij(i, j) * gradW_tilde(i, j)
+      -Z(i) * Z(j) / y(i) / y(j) * (sph[i].P + sph[j].P) * gradW_sym(i, j)
   elseif formulation == "Lagrangian"
     force_hydro =
       -Z(i) * Z(j) * (
-        grad_h(i) * sph[i].P / y(i)^2 * eij(i, j) * gradW(i, j) +
-        grad_h(j) * sph[j].P / y(j)^2 * eij(i, j) * gradW(j, i)
+        grad_h(i) * sph[i].P / y(i)^2 * gradW(i, j) +
+        grad_h(j) * sph[j].P / y(j)^2 * gradW(i, j, j)
       )
   else
     @assert 0
   end
-  force_visc = -sph[i].m * sph[j].m * PI_visc(i, j) * eij(i, j) * gradW_tilde(i, j)
+  force_visc = -sph[i].m * sph[j].m * PI_visc(i, j) * gradW_sym(i, j)
   return force_hydro + force_visc
 end
 
@@ -24,17 +24,17 @@ function dU(i::Int, j::Int)
     return 0
   end
 
-  if formulation == "vanilla ice"
+  if formulation == "VanillaIce"
     dU_hydro =
-      sph[i].P * Z(i) * Z(j) / y(i) / y(j) * vij(i, j) * eij(i, j) * gradW_tilde(i, j)
+      sph[i].P * Z(i) * Z(j) / y(i) / y(j) * vij(i, j) * gradW_sym(i, j)
   elseif formulation == "Lagrangian"
     dU_hydro =
-      grad_h(i) * sph[i].P * Z(i) * Z(j) / y(i)^2 * vij(i, j) * eij(i, j) * gradW(i, j)
+      grad_h(i) * sph[i].P * Z(i) * Z(j) / y(i)^2 * vij(i, j) * gradW(i, j)
   else
     @assert 0
   end
   dU_visc =
-    0.5 * sph[i].m * sph[j].m * PI_visc(i, j) * vij(i, j) * eij(i, j) * gradW_tilde(i, j)
+    0.5 * sph[i].m * sph[j].m * PI_visc(i, j) * vij(i, j) * gradW_sym(i, j)
   return dU_hydro + dU_visc
 end
 
@@ -64,16 +64,15 @@ function PI_visc(i, j)
   end
 end
 
-function divv(i::Int, j::Int)
+function divergence_v(i::Int, j::Int)
   if i == j
     return 0
   else
-    return -Z(j) / y(j) * vij(i, j) * eij(i, j) * gradW_tilde(i, j)
+    return -Z(j) / y(j) * vij(i, j) * eij(i, j) * gradW_sym(i, j)
   end
 end
 
-function dalpha_visc(i)
-  divv = sph[i].divv
+function dalpha_visc(i, divv)
   S = max(-divv * (alpha_max - sph[i].alpha), 0)
   tau = sph[i].hsml / 0.2 / cs(i)
   dalpha_visc = -(sph[i].alpha - alpha_min) / tau + S

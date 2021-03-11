@@ -1,9 +1,9 @@
 function integrate(dt)
-  if time_integrator == "leapfrog"
+  if time_integrator == "Leapfrog"
     kick_drift(0.5 * dt, dt)
     evaluate()
     kick(0.5 * dt)
-  elseif time_integrator == "modified leapfrog"
+  elseif time_integrator == "ModifiedLeapfrog"
     kick_drift(0.5 * dt, dt)
     evaluate()
     kick(0.5 * dt)

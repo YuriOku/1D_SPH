@@ -1,19 +1,19 @@
 # simulation settings
 
-# kernel function: "cubic spline", "Wendland C2"
-kernel = "Wendland C2"
+# kernel function: "CubicSpline", "WendlandC2"
+kernel = "CubicSpline"
 
-# kernel interpolation: "standard"
-gradient = "standard"
+# kernel interpolation: "Standard", "IntegralApproach"
+gradient = "IntegralApproach"
 
-# sph formulation: "vanilla ice", "Lagrangian"
-formulation = "Lagrangian"
+# sph formulation: "VanillaIce", "Lagrangian"
+formulation = "VanillaIce"
 
 # volume element: "mass", "U"
 volume_element = "mass"
 
-# time integrator: "RK2", "VL2", "RK3", "leapfrog", "modified leapfrog", "symplectic Euler"
-time_integrator = "RK3"
+# time integrator: "RK2", "VL2", "RK3", "Leapfrog", "ModifiedLeapfrog", "symplectic Euler"
+time_integrator = "Leapfrog"
 
 # output file name
 outputfile = "out/out"
@@ -22,7 +22,7 @@ outputfile = "out/out"
 cfl = 0.3
 
 # time-dependent viscosity. if set to false, viscosity alpha is always 1.
-time_dependent_viscosity = true
+time_dependent_viscosity = false
 alpha_max = 1.5
 alpha_min = 0.1
 
@@ -38,7 +38,7 @@ Nngb = 32
 
 # simulation time and output timing
 t_start = 0
-t_end = 0.2
+t_end = 0.01
 output_interval = 0.001
 
 # specific heat ratio
@@ -56,7 +56,7 @@ x_center = 0
 setup = "standard"
 
 # plot density, pressure and velocity: true, false
-plot_figure = true
+plot_figure = false
 x_min_plot = -0.5
 x_max_plot = 0.5
 
@@ -78,6 +78,7 @@ P_left = 1
 rho_right = 0.25
 v_right = 0
 P_right = 0.1795
+
 # strong shock tube (Saitoh & Makino, 2013)
 elseif setup == "strong"
 rho_left = 1
@@ -86,6 +87,7 @@ P_left = 1000
 rho_right = 1
 v_right = 0
 P_right = 0.01
+
 elseif setup == "custom"
 # density and pressure in the left side
 rho_left = 1

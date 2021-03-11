@@ -15,8 +15,8 @@ mutable struct Ptype
   F1::Float64
   dU::Float64
   hsml::Float64
+  c11::Float64
 
-  divv::Float64
   alpha::Float64
   alpha_old::Float64
   dalpha::Float64
@@ -32,7 +32,7 @@ mutable struct Ptype
     F1 = 0
     dU = 0
     hsml = 0
-    divv = 0
+    c11 = 0
     alpha = alpha_min
     alpha_old = 0
     dalpha = 0
@@ -50,7 +50,7 @@ mutable struct Ptype
       F1,
       dU,
       hsml,
-      divv,
+      c11,
       alpha,
       alpha_old,
       dalpha,

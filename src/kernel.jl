@@ -1,11 +1,12 @@
 # In this file, kernel functions and their gradients are defined
 
-function W(i, j)
-  h = sph[i].hsml
+# W(r_ij, h_k)
+function W(i, j, k=i)
+  h = sph[k].hsml
   invh = 1 / h
   r = dist(i, j) * invh
 
-  if kernel == "cubic spline"
+  if kernel == "CubicSpline"
     norm = 4 / 3 * invh
     if r > 1
       return 0
@@ -14,7 +15,7 @@ function W(i, j)
     else
       return norm * (1 - 6 * r^2 + 6 * r^3)
     end
-  elseif kernel == "Wendland C2"
+  elseif kernel == "WendlandC2"
     norm = 5 / 4 * invh
     if r > 1
       return 0
@@ -26,41 +27,46 @@ function W(i, j)
   end
 end
 
-function gradW(i, j)
-  h = sph[i].hsml
+# nabla_i W(r_ij, h_k)
+function gradW(i, j, k=i)
+  h = sph[k].hsml
   invh = 1 / h
   r = dist(i, j) * invh
 
-  if gradient == "standard"
-    if kernel == "cubic spline"
+  if gradient == "Standard"
+    if kernel == "CubicSpline"
       norm = 4 / 3 * invh
       if r > 1
-        return 0
+        gradW = 0
       elseif r > 0.5
-        return norm * 6 * (1 - r)^2 * (-invh)
+        gradW = norm * 6 * (1 - r)^2 * (-invh)
       else
-        return norm * (-12 * r * invh + 18 * r^2 * invh)
+        gradW = norm * (-12 * r * invh + 18 * r^2 * invh)
       end
-    elseif kernel == "Wendland C2"
+    elseif kernel == "WendlandC2"
       norm = 5 / 4 * invh
       if r > 1
-        return 0
+        gradW = 0
       else
-        return norm * (-3 * (1 - r)^2 * (1 + 3 * r) * invh + 3 * (1 - r)^3 * invh)
+        gradW = norm * (-3 * (1 - r)^2 * (1 + 3 * r) * invh + 3 * (1 - r)^3 * invh)
       end
     else
       @assert 0
     end
+    gradW = eij(i, j) * gradW
+  elseif gradient == "IntegralApproach"
+    gradW = (sph[j].x - sph[i].x) * W(i, j, k) / sph[k].c11
   end
+  return gradW
 end
 
+# dW(r_ij, h_i)/dh_i
 function dWdh(i, j)
   h = sph[i].hsml
   invh = 1 / h
   r = dist(i, j) * invh
 
-  if gradient == "standard"
-    if kernel == "cubic spline"
+    if kernel == "CubicSpline"
       if r > 1
         return 0
       elseif r > 0.5
@@ -68,7 +74,7 @@ function dWdh(i, j)
       else
         return -4 / 3 * invh * (1 - 18 * r^2 + 24 * r^3)
       end
-    elseif kernel == "Wendland C2"
+    elseif kernel == "WendlandC2"
       if r > 1
         return 0
       else
@@ -77,13 +83,21 @@ function dWdh(i, j)
     else
       @assert 0
     end
-  end
 end
 
-function W_tilde(i, j)
+# averaged for symmetry against exchange of i and j
+function W_sym(i, j)
   return 0.5 * (W(i, j) + W(j, i))
 end
 
-function gradW_tilde(i, j)
-  return 0.5 * (gradW(i, j) + gradW(j, i))
+# nabla_i (W(r_ij, h_i) + W(r_ij, h_j))/2
+function gradW_sym(i, j)
+  return 0.5 * (gradW(i, j) + gradW(i, j, j))
+end
+
+
+# This correction matrix accounts for local particle distribution.
+# In this one-dimentional code, this is not a matrix but a scaler
+function correction_matrix(i, j)
+  return Z(j)/y(j) * (sph[j].x - sph[i].x)^2 * W(i, j)
 end

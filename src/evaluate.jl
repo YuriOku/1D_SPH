@@ -1,43 +1,57 @@
 function evaluate()
   reorder()
 
-  Threads.@threads for i in 1:Npart
+  Threads.@threads for i = 1:Npart
     kernel_summation(i)
   end
 
-  Threads.@threads for i in 1:Npart
+  if gradient == "IntegralApproach"
+    Threads.@threads for i = 1:Npart
+      sph[i].c11 = 0
+      # neighbour loop
+      j = index_list[i]
+      j_min = max(1, j - Nngb)
+      j_max = min(Npart, j + Nngb)
+      for j = j_min:j_max
+        k = index_order[j]
+        sph[i].c11 += correction_matrix(i, k)
+      end
+    end
+  end
+
+  Threads.@threads for i = 1:Npart
     # refresh
     sph[i].F1 = 0
     sph[i].dU = 0
     sph[i].dalpha = 0
+    divv = 0
 
     # neighbour loop
     j = index_list[i]
     j_min = max(1, j - Nngb)
     j_max = min(Npart, j + Nngb)
-    for j in j_min:j_max
+    for j = j_min:j_max
       k = index_order[j]
       sph[i].F1 += force(i, k)
       sph[i].dU += dU(i, k)
       if time_dependent_viscosity
-        sph[i].divv += divv(i, k)
+        divv += divergence_v(i, k)
       end
     end
     if time_dependent_viscosity
-      sph[i].dalpha = dalpha_visc(i)
-      sph[i].divv = 0
+      sph[i].dalpha = dalpha_visc(i, divv)
     end
   end
 end
 
 function reorder()
   x_array = []
-  for i in 1:Npart
+  for i = 1:Npart
     push!(x_array, sph[i].x)
   end
   global index_order = sortperm(x_array)
   global index_list = zeros(Int, Npart)
-  for i in 1:Npart
+  for i = 1:Npart
     j = index_order[i]
     index_list[j] = i
   end
@@ -48,53 +62,7 @@ function kernel_summation(i)
   evaluate_hsml(i)
   density(i, volume_element)
   # EoS
-  if volume_element == "mass"
-    sph[i].P = eos_P(i)
-  elseif volume_element == "U"
-    sph[i].rho = eos_rho(i)
-  end
-end
-
-function eos_P(i::Int)
-  if sph[i].U < 0
-    @show i, sph[i].x, sph[i].p / sph[i].m
-  end
-  @assert sph[i].U > 0
-  P = (gamma - 1) * sph[i].rho / sph[i].m * sph[i].U
-  return P
-end
-
-function eos_rho(i::Int)
-  if sph[i].U < 0
-    @show i, sph[i].x, sph[i].p / sph[i].m
-  end
-  @assert sph[i].U > 0
-  rho = sph[i].P / (gamma - 1) * sph[i].m / sph[i].U
-  return rho
-end
-
-function density(i::Int, volume)
-  if volume == "mass"
-    rho = 0
-    j = index_list[i]
-    j_min = max(1, j - Nngb)
-    j_max = min(Npart, j + Nngb)
-    for j in j_min:j_max
-      k = index_order[j]
-      rho += sph[k].m * W(i, k)
-    end
-    sph[i].rho = rho
-  elseif volume == "U"
-    P = 0
-    j = index_list[i]
-    j_min = max(1, j - Nngb)
-    j_max = min(Npart, j + Nngb)
-    for j in j_min:j_max
-      k = index_order[j]
-      P += sph[k].U * (gamma - 1) * W(i, k)
-    end
-    sph[i].P = P
-  end
+  eos(i, volume_element)
 end
 
 function evaluate_hsml(i)
@@ -110,8 +78,8 @@ function evaluate_hsml(i)
     iter += 1
     if iter > 1e4
       sph[i].hsml = h0
-      gi = g(i)
-      println("iteration loop of hsml evaluation exceeds 1e4. h0 = $h0, CHA = $CHA, g(i) = $gi")
+      println("iteration loop of hsml evaluation exceeds 1e4.")
+      @printf("i = %d, h0 = %.7f, CHA = %.7f, g(i) = %.7f, rho = %.7f\n", i, h0, CHA, g(i), density(i, "mass"))
       break
     end
   end
@@ -127,7 +95,7 @@ function dgdh(i)
   j = index_list[i]
   j_min = max(1, j - Nngb)
   j_max = min(Npart, j + Nngb)
-  for j in j_min:j_max
+  for j = j_min:j_max
     k = index_order[j]
     drhodh += sph[k].m * dWdh(i, k)
     sph[i].dydh += Z(k) * dWdh(i, k)
@@ -135,3 +103,43 @@ function dgdh(i)
   dgdh = 1 + eta_hsml * sph[i].m / sph[i].rho^2 * drhodh
   return dgdh
 end
+
+function density(i::Int, Z_input)
+  y = 0
+  j = index_list[i]
+  j_min = max(1, j - Nngb)
+  j_max = min(Npart, j + Nngb)
+  for j = j_min:j_max
+    k = index_order[j]
+    if Z_input == "mass"
+      y += sph[k].m * W(i, k)
+    elseif Z_input == "U"
+      y += sph[k].U * (gamma - 1) * W(i, k)
+    else
+      @assert 0
+    end
+  end
+
+  if Z_input == "mass"
+    sph[i].rho = y
+  elseif Z_input == "U"
+    sph[i].P = y
+  else
+    @assert 0
+  end
+end
+
+function eos(i::Int, Z_input)
+  if sph[i].U < 0
+    @show i, sph[i].x, sph[i].p / sph[i].m
+  end
+  @assert sph[i].U > 0
+  if Z_input == "mass"
+    sph[i].P = (gamma - 1) * sph[i].rho / sph[i].m * sph[i].U
+  elseif Z_input == "U"
+    sph[i].rho = sph[i].P / (gamma - 1) * sph[i].m / sph[i].U
+  else
+    @assert 0
+  end
+end
+
