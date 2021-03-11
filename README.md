@@ -18,6 +18,10 @@ The Sod shock tube problem is generated and solved by the SPH scheme.
 - Rosswog, S., “The Lagrangian hydrodynamics code MAGMA2”, <i>Monthly Notices of the Royal Astronomical Society</i>, vol. 498, no. 3, pp. 4230–4255, 2020. doi:10.1093/mnras/staa2591.
 - Wadsley, J. W., Keller, B. W., and Quinn, T. R., “Gasoline2: a modern smoothed particle hydrodynamics code”, <i>Monthly Notices of the Royal Astronomical Society</i>, vol. 471, no. 2, pp. 2357–2369, 2017. doi:10.1093/mnras/stx1643.
 
+## kernel gradients
+- García-Senz, D., Cabezón, R. M., and Escartín, J. A., “Improving smoothed particle hydrodynamics with an integral approach to calculating gradients”, <i>Astronomy and Astrophysics</i>, vol. 538, 2012. doi:10.1051/0004-6361/201117939.
+- Rosswog, S., “Boosting the accuracy of SPH techniques: Newtonian and special-relativistic tests”, <i>Monthly Notices of the Royal Astronomical Society</i>, vol. 448, no. 4, pp. 3628–3664, 2015. doi:10.1093/mnras/stv225.
+
 ## kernel functions
 - Dehnen, W. and Aly, H., ``Improving convergence in smoothed particle hydrodynamics simulations without pairing instability'', <i>Monthly Notices of the Royal Astronomical Society</i>, vol. 425, no. 2, pp. 1068–1082, 2012. doi:10.1111/j.1365-2966.2012.21439.x.
 
