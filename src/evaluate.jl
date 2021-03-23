@@ -1,4 +1,5 @@
 function evaluate()
+  periodic_boundary()
   reorder()
 
   Threads.@threads for i = 1:Npart
@@ -9,11 +10,12 @@ function evaluate()
     Threads.@threads for i = 1:Npart
       sph[i].c11 = 0
       # neighbour loop
-      j = index_list[i]
-      j_min = max(1, j - Nngb)
-      j_max = min(Npart, j + Nngb)
-      for j = j_min:j_max
-        k = index_order[j]
+      s = index_list[i]
+
+      for t = (s - Nngb) : (s + Nngb)
+        t = order_periodic(t)
+        k = index_order[t]
+
         sph[i].c11 += correction_matrix(i, k)
       end
     end
@@ -27,11 +29,11 @@ function evaluate()
     divv = 0
 
     # neighbour loop
-    j = index_list[i]
-    j_min = max(1, j - Nngb)
-    j_max = min(Npart, j + Nngb)
-    for j = j_min:j_max
-      k = index_order[j]
+    s = index_list[i]
+
+    for t = (s - Nngb) : (s + Nngb)
+      t = order_periodic(t)
+      k = index_order[t]
       sph[i].F1 += force(i, k)
       sph[i].dU += dU(i, k)
       if time_dependent_viscosity
@@ -40,6 +42,16 @@ function evaluate()
     end
     if time_dependent_viscosity
       sph[i].dalpha = dalpha_visc(i, divv)
+    end
+  end
+end
+
+function periodic_boundary()
+  for i = 1:Npart
+    if sph[i].x < x_min
+      sph[i].x += lbox
+    elseif sph[i].x > x_max
+      sph[i].x -= lbox
     end
   end
 end
@@ -55,6 +67,15 @@ function reorder()
     j = index_order[i]
     index_list[j] = i
   end
+end
+
+function order_periodic(j)
+  if j < 1
+    j += Npart
+  elseif j > Npart
+    j -= Npart
+  end
+  return j
 end
 
 function kernel_summation(i)
@@ -92,11 +113,10 @@ end
 function dgdh(i)
   drhodh = 0
   sph[i].dydh = 0
-  j = index_list[i]
-  j_min = max(1, j - Nngb)
-  j_max = min(Npart, j + Nngb)
-  for j = j_min:j_max
-    k = index_order[j]
+  s = index_list[i]
+  for t = (s - Nngb) : (s + Nngb)
+    t = order_periodic(t)
+    k = index_order[t]
     drhodh += sph[k].m * dWdh(i, k)
     sph[i].dydh += Z(k) * dWdh(i, k)
   end
@@ -106,11 +126,16 @@ end
 
 function density(i::Int, Z_input)
   y = 0
-  j = index_list[i]
-  j_min = max(1, j - Nngb)
-  j_max = min(Npart, j + Nngb)
-  for j = j_min:j_max
-    k = index_order[j]
+
+  # particle "i" is sth particle from left
+  s = index_list[i]
+
+  # take kernel summation for 2Nngb particles around particle "i"
+  for t = (s - Nngb) : (s + Nngb)
+    # consider tth particle from left
+    t = order_periodic(t)
+    # k is the index number of tth particle from left
+    k = index_order[t]
     if Z_input == "mass"
       y += sph[k].m * W(i, k)
     elseif Z_input == "U"

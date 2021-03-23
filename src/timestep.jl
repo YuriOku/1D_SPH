@@ -2,12 +2,12 @@ function timestep()
   dt = dt_max
   for i in active_particle
     @assert sph[i].P > 0
-    j = index_list[i]
-    j_min = max(1, j - Nngb)
-    j_max = min(Npart, j + Nngb)
+
+    s = index_list[i]
     vmax = 0
-    for j = j_min:j_max
-      k = index_order[j]
+    for t = (s - Nngb) : (s + Nngb)
+      t = order_periodic(t)
+      k = index_order[t]
       vsig = cs(i) + cs(k) - 3 * eij(i, k) * vij(i, k)
       if vsig > vmax
         vmax = vsig

@@ -11,17 +11,21 @@ function initialize()
 
   initialize_exact_riemann_solver()
 
-  if debug
-    global p_initial = 0
-    global E_initial = 0
-    for i = 1:length(sph)
-      p_initial += sph[i].p
-      E_initial += sph[i].U + 0.5 * sph[i].p^2 / sph[i].m
-    end
+  
+  global p_initial = 0
+  global E_initial = 0
+  for i = 1:length(sph)
+    p_initial += sph[i].p
+    E_initial += sph[i].U + 0.5 * sph[i].p^2 / sph[i].m
   end
 
   Nthreads = Threads.nthreads()
-  return println("Number of threads: $Nthreads")
+  println("Number of threads: $Nthreads")
+
+  global hstfilename = @sprintf("%s_%s_%s_%s_%s_%s_%s.hst", outputfile, formulation, gradient, time_integrator, kernel, volume_element, time_dependent_viscosity)
+  open(hstfilename, "w") do io
+    println(io, "### time dt p_error E_error L1_error")
+  end
 end
 
 function make_shock_tube()
@@ -52,11 +56,7 @@ function make_shock_tube()
     sph[i] = Ptype(x, v, m, rho, P)
   end
 
-  if !debug
-    global active_particle = Nngb:(Npart-Nngb)
-  else
-    global active_particle = 1:Npart
-  end
+  global active_particle = 1:Npart
 end
 
 function initialize_exact_riemann_solver()

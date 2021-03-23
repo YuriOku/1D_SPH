@@ -21,6 +21,7 @@ function output(t, t_output)
         println(io, "$x $v $rho $P $hsml")
       end
     end
+
     if plot_figure
       step_riemann = lbox / Nsample_riemann
       x_riemann = x_min:step_riemann:x_max
@@ -44,7 +45,7 @@ function output(t, t_output)
       plt_v = Plots.scatter!(x_array, v_array; markersize=2, label="sim")
 
       Plots.plot(plt_rho, plt_v, plt_P; layout=(3, 1), size=(400, 600))
-      figname = @sprintf("%s_fig_%03d.png", outputfile, output_count)
+      figname = @sprintf("%s_%s_%s_%s_%s_%s_%s_fig_%03d.png", outputfile, formulation, gradient, time_integrator, kernel, volume_element, time_dependent_viscosity, output_count)
       Plots.savefig(figname)
     end
     global t_output += output_interval

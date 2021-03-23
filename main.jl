@@ -4,7 +4,7 @@
 kernel = "CubicSpline"
 
 # kernel interpolation: "Standard", "IntegralApproach"
-gradient = "IntegralApproach"
+gradient = "Standard"
 
 # sph formulation: "VanillaIce", "Lagrangian"
 formulation = "VanillaIce"
@@ -13,7 +13,7 @@ formulation = "VanillaIce"
 volume_element = "mass"
 
 # time integrator: "RK2", "VL2", "RK3", "Leapfrog", "ModifiedLeapfrog", "symplectic Euler"
-time_integrator = "Leapfrog"
+time_integrator = "ModifiedLeapfrog"
 
 # output file name
 outputfile = "out/out"
@@ -31,14 +31,14 @@ dt_max = 1
 
 # factor for evaluation of smoothing length
 # this code uses Gadget's definition of smoothing length (smoothing kernel vanishes at 1h rather than at 2h)
-eta_hsml = 2.4
+eta_hsml = 4.8
 
 # maximum number of SPH neighbour particles
 Nngb = 32
 
 # simulation time and output timing
 t_start = 0
-t_end = 0.01
+t_end = 0.1
 output_interval = 0.001
 
 # specific heat ratio
@@ -56,19 +56,18 @@ x_center = 0
 setup = "standard"
 
 # plot density, pressure and velocity: true, false
-plot_figure = false
-x_min_plot = -0.5
-x_max_plot = 0.5
+plot_figure = true
+x_min_plot = -1
+x_max_plot = 1
 
 # number of sample points for exact Riemann solver 
-Nsample_riemann = 1e3
+Nsample_riemann = 1e4
 
 # tolerance criterion in iterative process in exact Riemann solver and density estimate
 TOL = 1e-6
 
-# check conservation of momentum and energy.
-# If this option set to true, wall particles are removed and simulated particles expand to vacuum.
-debug = true
+# size of bin to measure L1 error
+L1_binsize = 0.05
 
 # standard shock tube (Saitoh & Makino, 2013; Springel et al., 2020)
 if setup == "standard"

@@ -81,12 +81,17 @@ end
 
 function dist(i::Int, j::Int)
   rij = abs(sph[i].x - sph[j].x)
+  rij = min(rij, lbox - rij)
   return rij
 end
 
 function eij(i::Int, j::Int)
   rij = abs(sph[i].x - sph[j].x)
   eij = (sph[i].x - sph[j].x) / rij
+
+  if abs(sph[i].x - sph[j].x) > lbox/2
+    eij *= -1
+  end
 
   return eij
 end

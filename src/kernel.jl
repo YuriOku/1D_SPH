@@ -55,7 +55,7 @@ function gradW(i, j, k=i)
     end
     gradW = eij(i, j) * gradW
   elseif gradient == "IntegralApproach"
-    gradW = (sph[j].x - sph[i].x) * W(i, j, k) / sph[k].c11
+    gradW = - eij(i, j) * dist(i, j) * W(i, j, k) / sph[k].c11
   end
   return gradW
 end
@@ -99,5 +99,5 @@ end
 # This correction matrix accounts for local particle distribution.
 # In this one-dimentional code, this is not a matrix but a scaler
 function correction_matrix(i, j)
-  return Z(j)/y(j) * (sph[j].x - sph[i].x)^2 * W(i, j)
+  return Z(j)/y(j) * dist(i, j)^2 * W(i, j)
 end
