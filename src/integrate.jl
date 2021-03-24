@@ -55,7 +55,7 @@ function kick_drift(dt_kick, dt_drift)
     sph[i].U = U_old + sph[i].dU * dt_drift
 
     if time_dependent_viscosity
-      alpha_old = sph[i].sph[i].alpha
+      alpha_old = sph[i].alpha
       sph[i].alpha_old = alpha_old + sph[i].dalpha * dt_kick
       sph[i].alpha = alpha_old + sph[i].dalpha * dt_drift
     end
