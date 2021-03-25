@@ -25,7 +25,7 @@ function integrate(dt)
     evaluate()
     RK(2/3, 1/3, 2/3, dt, 3)
     evaluate()
-  elseif time_integrator == "symplectic Euler"
+  elseif time_integrator == "symplecticEuler"
     symplectic_euler(dt)
     evaluate()
   else
