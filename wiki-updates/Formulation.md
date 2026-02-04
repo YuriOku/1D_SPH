@@ -35,15 +35,15 @@ $$
 
 ,where 
 $W$
- is the [kernel function](https://github.com/YuriOku/1D_SPH/wiki/kernel-function) for the particle spread.
+is the [kernel function](https://github.com/YuriOku/1D_SPH/wiki/kernel-function) for the particle spread.
 When this is discretized using the volume element 
 $dV$
- of each SPH particle, it becomes
+of each SPH particle, it becomes
 
 $$
-f_i = \sum_j f_j dV_j W(| x_i - x_j|, h_i)
+f_i = \sum_j f_j dV_j W(| x_i - x_j|, h_i).
 \cdot\cdot\cdot\cdot\cdot(2)
-$$. 
+$$
 
 The volume element is obtained from the physical quantity 
 $Z$
@@ -59,9 +59,9 @@ $f$
  is expressed as 
 
 $$
-\nabla_i f_i = \sum_j f_j dV_j \nabla_i W(| x_i - x_j|, h_i)
+\nabla_i f_i = \sum_j f_j dV_j \nabla_i W(| x_i - x_j|, h_i).
 \cdot\cdot\cdot\cdot\cdot(3)
-$$.
+$$
 
 For the calculation of 
 $\nabla_i W$
@@ -97,33 +97,36 @@ $$
 \end{align*}
 $$
 
-Here, 
-$\vec{v}_{ij} = \vec{v}_i - \vec{v}_j,\ \tilde{W}_{ij} = [W(r_{ij}, h_i)+W(r_{ij}, h_j)]/2$.
+Here,
+$\vec{v_{ij}}=\vec{v_i} - \vec{v_j}$
+,
+$\tilde{W_{ij}}= [W(r_{ij},h_i)+W(r_{ij}, h_j)]/2$
+.
 
 ## Lagrangian
 Another way to derive the SPH equation is to start with the Lagrangian and use the variational principle.
 The Lagrangian of the SPH particle system is 
 
 $$
-L = \sum_i m_i(\frac{v_i^2}{2} - u_i)
+L = \sum_i m_i(\frac{v_i^2}{2} - u_i).
 \cdot\cdot\cdot\cdot\cdot(4)
-$$. 
+$$
 
 This is substituted into the Euler-Lagrange equation 
 
 $$
-\frac{d}{dt}\left(\frac{\partial L}{\partial \vec{v}_i} \right) - \frac{\partial L}{\partial \vec{r}_i} = 0
+\frac{d}{dt}\left(\frac{\partial L}{\partial \vec{v}_i} \right) - \frac{\partial L}{\partial \vec{r}_i} = 0.
 \cdot\cdot\cdot\cdot\cdot(5)
-$$.
+$$
 
 The first term is the left-hand side of the equation of motion.
 Substituting the Lagrangian into the second term, we obtain 
 
 $$
 \frac{\partial L}{\partial \vec{r}_i} = -\sum_j m_j\frac{\partial u_j}{\partial \rho_j}
-\frac{\partial \rho_j}{\partial \vec{r}_i}
+\frac{\partial \rho_j}{\partial \vec{r}_i}.
 \cdot\cdot\cdot\cdot\cdot(6)
-$$.
+$$
 
  Now, using the first law of thermodynamics for isentropic flow
 
@@ -136,9 +139,9 @@ $$
 
 $$
 m_i\frac{d\vec{v}_i}{dt} = -\sum_j m_j\frac{P_j}{\rho_j^2}
-\frac{\partial \rho_j}{\partial \vec{r}_i}
+\frac{\partial \rho_j}{\partial \vec{r}_i}.
 \cdot\cdot\cdot\cdot\cdot(8)
-$$.
+$$
 
 When we formulate the SPH equations from the density (the case with $Z = m,\,y = \rho$), substitute
 
@@ -200,9 +203,9 @@ $$
 f_i \frac{P_i}{y_i^2} \nabla_i W(r_{ij}, h_i) + 
 f_j \frac{P_j}{y_j^2} \nabla_i W(r_{ij}, h_j)
 \right)\\
-\frac{du_i}{dt} &= f_i \frac{P_i}{m_i y_i^2} \sum_j Z_i Z_j \vec{v_{ij}} \cdot \nabla_i W(r_{ij}, h_i)
+\frac{du_i}{dt} &= f_i \frac{P_i}{m_i y_i^2} \sum_j Z_i Z_j \vec{v_{ij}} \cdot \nabla_i W(r_{ij}, h_i).
 \end{align*}
-$$.
+$$
 
 ## References
 - Monaghan, J. J., “Smoothed particle hydrodynamics.”, <i>Annual Review of Astronomy and Astrophysics</i>, vol. 30, pp. 543–574, 1992. doi:10.1146/annurev.aa.30.090192.002551.
