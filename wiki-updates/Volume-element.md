@@ -10,7 +10,7 @@ $y$
 $dV = \frac{Z}{y}$
 .
 
-## $Z = m,\,y = \rho$ 
+## $Z = m$, $y = \rho$ 
 
 Calculating the volume element using density as the fundamental quantity is the standard method in the SPH method, which is also called the **Standard SPH** (SSPH).
 In this case, the density can be expressed as the kernel sum of the masses as follows:
@@ -37,11 +37,7 @@ $\gamma$
 $u$
  is the internal energy per unit mass.
 
-## Case: Z = mu, y = P/(γ - 1)
-
-$$
-Z = mu,\,y = P/(\gamma - 1)
-$$ 
+## $Z = mu$, $y = P/(γ - 1)$
 
 In the standard SPH method, other physical quantities are calculated based on the density obtained as the kernel sum. Kernel summation leads to a field distortion, making it impossible to treat discontinuously varying densities such as contact discontinuities with high accuracy (Agertz et al., 2007). Saitoh & Makino (2013) proposed a method to formulate the SPH method using pressure as the basic quantity to solve this problem. This method is called density-independent SPH (DISPH). The basic quantity, pressure, can be obtained as 
 
