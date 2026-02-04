@@ -16,6 +16,7 @@ $h$
 The kernel function must satisfy the following three properties:
 
 - It is normalized.
+
 $$
 \int W(\vec{r}, h) dV = 1
 $$
@@ -71,10 +72,10 @@ $$
 \begin{cases}
 -12\left(\frac{r}{h}\right) + 18\left(\frac{r}{h}\right)^2 & \left( 0 < \frac{r}{h} \leq \frac{1}{2} \right)\\
 6\left( 1- \frac{r}{h} \right)^2 &\left( \frac{1}{2} < \frac{r}{h} \leq 1\right)\\
-0 &\left( 1 < \frac{r}{h} \right)
+0 &\left( 1 < \frac{r}{h} \right).
 \end{cases}
 $$
-.
+
 
 The spline series also includes the higher-order Quartic spline (4th order), Quintic spline (5th order),... functions.
 
@@ -99,9 +100,9 @@ $$
 \frac{\partial W(r, h)}{\partial r} = \frac{C}{h}
 \begin{cases}
 -\frac{4r}{h}\left(1 - \frac{r}{h} \right)^2  & \left( \frac{r}{h} \leq 1 \right) \\
-0 &  \left( \frac{r}{h} > 1 \right) 
+0 &  \left( \frac{r}{h} > 1 \right).
 \end{cases}
-$$.
+$$
 
 Higher-order C4 and C6 functions are also available in the Wendland series.
 
