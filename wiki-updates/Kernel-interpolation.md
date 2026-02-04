@@ -249,4 +249,4 @@ $$
 ## References
 - García-Senz, D., Cabezón, R. M., and Escartín, J. A., "Improving smoothed particle hydrodynamics with an integral approach to calculating gradients", <i>Astronomy and Astrophysics</i>, vol. 538, 2012. doi:10.1051/0004-6361/201117939.
 - Price, D. J., "Magnetic fields in Astrophysics", PhDT, 2004.
-- Rosswog, S., "Boosting the accuracy of SPH techniques: Newtonian and special-relativistic tests", <i>Monthly Notices of the the Royal Astronomical Society</i>, vol. 448, no. 4, pp. 3628-3664, 2015. doi:10.1093/mnras/stv225.
+- Rosswog, S., "Boosting the accuracy of SPH techniques: Newtonian and special-relativistic tests", <i>Monthly Notices of the Royal Astronomical Society</i>, vol. 448, no. 4, pp. 3628-3664, 2015. doi:10.1093/mnras/stv225.

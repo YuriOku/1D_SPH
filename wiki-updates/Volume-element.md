@@ -37,7 +37,9 @@ $\gamma$
 $u$
  is the internal energy per unit mass.
 
-## $$
+## Case: Z = mu, y = P/(γ - 1)
+
+$$
 Z = mu,\,y = P/(\gamma - 1)
 $$ 
 

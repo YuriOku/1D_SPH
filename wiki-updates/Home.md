@@ -16,7 +16,7 @@ There are some options for the following components:
 
 1D_SPH はJulia言語で書かれた1次元SPHシミュレーションコードです。
 
-1D_SPHでは、以下の要素についていくつかの選択肢からユーザーがスキームを選択するすることができます:
+1D_SPHでは、以下の要素についていくつかの選択肢からユーザーがスキームを選択することができます:
 
 * SPH方程式系の定式化
 * カーネル補間法
