@@ -65,7 +65,7 @@ $$.
 
 For the calculation of 
 $\nabla_i W$
-, see [Kernel Interpolation Method](https://github.com/YuriOku/1D_SPH/wiki/カーネル補間法).
+, see [Kernel Interpolation Method](https://github.com/YuriOku/1D_SPH/wiki/Kernel-interpolation).
 Before applying eq. (3) to the right-hand side of the equation of motion, we use the relation 
 
 $$
@@ -98,8 +98,7 @@ $$
 $$
 
 Here, 
-![\vec{v}_{ij} = \vec{v}_i - \vec{v}_j,\ \tilde{W}_{ij} = [W(r_{ij}, h_i)+W(r_{ij}, h_j)]/2
-](https://render.githubusercontent.com/render/math?math=%5Ctextstyle+%5Cvec%7Bv%7D_%7Bij%7D+%3D+%5Cvec%7Bv%7D_i+-+%5Cvec%7Bv%7D_j%2C%5C+%5Ctilde%7BW%7D_%7Bij%7D+%3D+%5BW%28r_%7Bij%7D%2C+h_i%29%2BW%28r_%7Bij%7D%2C+h_j%29%5D%2F2%0A).
+$\vec{v}_{ij} = \vec{v}_i - \vec{v}_j,\ \tilde{W}_{ij} = [W(r_{ij}, h_i)+W(r_{ij}, h_j)]/2$.
 
 ## Lagrangian
 Another way to derive the SPH equation is to start with the Lagrangian and use the variational principle.

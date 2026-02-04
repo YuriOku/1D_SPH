@@ -17,7 +17,7 @@ r_{ij} = \left| \mathbf{r}_i - \mathbf{r}_j \right|,\ \mathbf{e}_{ij} = \frac{\m
 $$
 . For 
 $\frac{\partial W}{\partial r}$
-, see [Kernel Functions](https://github.com/YuriOku/1D_SPH/wiki/カーネル関数).
+, see [Kernel Functions](https://github.com/YuriOku/1D_SPH/wiki/Kernel-function).
 
 ## Integral Approach
 The Integral Approach (IA), proposed by García-Senz et al. (2012), can handle Rayleigh-Taylor instability and Kelvin-Helmholtz instability with better accuracy than the conventional SPH method.
@@ -138,7 +138,8 @@ can be obtained.
 ### 3-D
 Equation (1) in three dimensions is
 
-![\left[ \begin{array}{c}
+$$
+\left[ \begin{array}{c}
 I_1 (\mathbf{r})\\
 I_2 (\mathbf{r})\\
 I_3 (\mathbf{r})
@@ -157,7 +158,9 @@ x_1^' - x_1\\
 x_2^' - x_2\\
 x_3^' - x_3
 \end{array} \right]
-W\left(\left| \mathbf{r}^' - \mathbf{r} \right|, h \right) d{r^'}^3](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0AI_1+%28%5Cmathbf%7Br%7D%29%5C%5C%0AI_2+%28%5Cmathbf%7Br%7D%29%5C%5C%0AI_3+%28%5Cmathbf%7Br%7D%29%0A%5Cend%7Barray%7D+%5Cright%5D+%3D+%5Cint+%5Cleft%28+%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_1%5C%5C%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_2%5C%5C%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_3%0A%5Cend%7Barray%7D+%5Cright%5D+%5Ccdot%0A%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0Ax_1%5E%27+-+x_1%5C%5C%0Ax_2%5E%27+-+x_2%5C%5C%0Ax_3%5E%27+-+x_3%0A%5Cend%7Barray%7D+%5Cright%5D+%5Cright%29%0A%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0Ax_1%5E%27+-+x_1%5C%5C%0Ax_2%5E%27+-+x_2%5C%5C%0Ax_3%5E%27+-+x_3%0A%5Cend%7Barray%7D+%5Cright%5D%0AW%5Cleft%28%5Cleft%7C+%5Cmathbf%7Br%7D%5E%27+-+%5Cmathbf%7Br%7D+%5Cright%7C%2C+h+%5Cright%29+d%7Br%5E%27%7D%5E3%5Ccdot%5Ccdot%5Ccdot%5Ccdot%5Ccdot+%2811%29)
+W\left(\left| \mathbf{r}^' - \mathbf{r} \right|, h \right) d{r^'}^3
+\cdot\cdot\cdot\cdot\cdot (11)
+$$
 
 , where 
 $$
@@ -171,7 +174,8 @@ $$
 $\nabla f(\mathbf{r})$
 , we obtain
 
-![\left[ \begin{array}{c}
+$$
+\left[ \begin{array}{c}
 \partial f(\mathbf{r})/\partial x_1\\
 \partial f(\mathbf{r})/\partial x_2\\
 \partial f(\mathbf{r})/\partial x_3
@@ -185,7 +189,9 @@ $\nabla f(\mathbf{r})$
 I_1 (\mathbf{r})\\
 I_2 (\mathbf{r})\\
 I_3 (\mathbf{r})
-\end{array} \right]](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_1%5C%5C%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_2%5C%5C%0A%5Cpartial+f%28%5Cmathbf%7Br%7D%29%2F%5Cpartial+x_3%0A%5Cend%7Barray%7D+%5Cright%5D+%3D%0A%5Cleft%5B+%5Cbegin%7Barray%7D%7Bccc%7D%0A%5Ctau_%7B11%7D+%26+%5Ctau_%7B12%7D+%26+%5Ctau_%7B13%7D%5C%5C%0A%5Ctau_%7B21%7D+%26+%5Ctau_%7B22%7D+%26+%5Ctau_%7B23%7D%5C%5C%0A%5Ctau_%7B31%7D+%26+%5Ctau_%7B32%7D+%26+%5Ctau_%7B33%7D%0A%5Cend%7Barray%7D+%5Cright%5D%5E%7B-1%7D%0A%5Cleft%5B+%5Cbegin%7Barray%7D%7Bc%7D%0AI_1+%28%5Cmathbf%7Br%7D%29%5C%5C%0AI_2+%28%5Cmathbf%7Br%7D%29%5C%5C%0AI_3+%28%5Cmathbf%7Br%7D%29%0A%5Cend%7Barray%7D+%5Cright%5D%5Ccdot%5Ccdot%5Ccdot%5Ccdot%5Ccdot+%2812%29)
+\end{array} \right]
+\cdot\cdot\cdot\cdot\cdot (12)
+$$
 
 , where 
 
@@ -201,12 +207,14 @@ $$
 
 . The inverse matrix in the first term on the right-hand side of equation (12) is
 
-![C = \frac{1}{\tau_{11}\tau_{22}\tau_{33} - \tau_{11}\tau_{23}\tau_{32} + \tau_{12}\tau_{21}\tau_{33} -\tau_{12}\tau_{23}\tau_{31} + \tau_{13}\tau_{21}\tau_{32} - \tau_{13}\tau_{22}\tau_{31}}
+$$
+C = \frac{1}{\tau_{11}\tau_{22}\tau_{33} - \tau_{11}\tau_{23}\tau_{32} + \tau_{12}\tau_{21}\tau_{33} -\tau_{12}\tau_{23}\tau_{31} + \tau_{13}\tau_{21}\tau_{32} - \tau_{13}\tau_{22}\tau_{31}}
 \left[ \begin{array}{ccc}
 \tau_{22}\tau_{33} - \tau_{23}\tau_{32} & \tau_{13}\tau_{32} - \tau_{12}\tau_{33} & \tau_{12}\tau_{23} - \tau_{13}\tau_{22}\\
 \tau_{23}\tau_{31} - \tau_{21}\tau_{33} & \tau_{11}\tau_{33} - \tau_{13}\tau_{31} & \tau_{13}\tau_{21} - \tau_{11}\tau_{23}\\
 \tau_{21}\tau_{32} - \tau_{22}\tau_{31} & \tau_{12}\tau_{31} - \tau_{11}\tau_{32} & \tau_{11}\tau_{22} - \tau_{12}\tau_{21}
-\end{array} \right]](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+C+%3D+%5Cfrac%7B1%7D%7B%5Ctau_%7B11%7D%5Ctau_%7B22%7D%5Ctau_%7B33%7D+-+%5Ctau_%7B11%7D%5Ctau_%7B23%7D%5Ctau_%7B32%7D+%2B+%5Ctau_%7B12%7D%5Ctau_%7B21%7D%5Ctau_%7B33%7D+-%5Ctau_%7B12%7D%5Ctau_%7B23%7D%5Ctau_%7B31%7D+%2B+%5Ctau_%7B13%7D%5Ctau_%7B21%7D%5Ctau_%7B32%7D+-+%5Ctau_%7B13%7D%5Ctau_%7B22%7D%5Ctau_%7B31%7D%7D%0A%5Cleft%5B+%5Cbegin%7Barray%7D%7Bccc%7D%0A%5Ctau_%7B22%7D%5Ctau_%7B33%7D+-+%5Ctau_%7B23%7D%5Ctau_%7B32%7D+%26+%5Ctau_%7B13%7D%5Ctau_%7B32%7D+-+%5Ctau_%7B12%7D%5Ctau_%7B33%7D+%26+%5Ctau_%7B12%7D%5Ctau_%7B23%7D+-+%5Ctau_%7B13%7D%5Ctau_%7B22%7D%5C%5C%0A%5Ctau_%7B23%7D%5Ctau_%7B31%7D+-+%5Ctau_%7B21%7D%5Ctau_%7B33%7D+%26+%5Ctau_%7B11%7D%5Ctau_%7B33%7D+-+%5Ctau_%7B13%7D%5Ctau_%7B31%7D+%26+%5Ctau_%7B13%7D%5Ctau_%7B21%7D+-+%5Ctau_%7B11%7D%5Ctau_%7B23%7D%5C%5C%0A%5Ctau_%7B21%7D%5Ctau_%7B32%7D+-+%5Ctau_%7B22%7D%5Ctau_%7B31%7D+%26+%5Ctau_%7B12%7D%5Ctau_%7B31%7D+-+%5Ctau_%7B11%7D%5Ctau_%7B32%7D+%26+%5Ctau_%7B11%7D%5Ctau_%7B22%7D+-+%5Ctau_%7B12%7D%5Ctau_%7B21%7D%0A%5Cend%7Barray%7D+%5Cright%5D)
+\end{array} \right]
+$$
 
 . The i-component of the integral (1)
 
